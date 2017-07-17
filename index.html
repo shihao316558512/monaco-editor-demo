@@ -13,6 +13,7 @@
 </head>
 <body>
     <div id="container" style="height: 400px; width:400px;"></div>
+    <button onclick="GetEditorValue();">获取编辑器值</button>
     <button onclick="ReCreateEditor();">重新创建编辑器</button>
     <script>
         var monacoEditor;
@@ -36,6 +37,9 @@
                     wrappingIndent: "indent"
                 });
             });
+        }
+        function GetEditorValue() {
+            alert(monacoEditor.getValue());
         }
     </script>
 </body>
