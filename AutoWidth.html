@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>monaco demo auto width</title>
+    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="node_modules/monaco-editor/min/vs/loader.js"></script>
+    <style>
+        body { background-color: pink; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="container" style="height: 400px;"></div>
+        <script>
+            var monacoEditor;
+            //init monaco
+            require.config({ paths: { 'vs': 'node_modules/monaco-editor/min/vs' } });
+            require(['vs/editor/editor.main'], function () {
+                monacoEditor = monaco.editor.create(document.getElementById('container'), {
+                    value: "<div>我是插入的代码</div>",
+                    language: 'html',
+                    wordWrap: "on",   //自动换行，注意大小写
+                    wrappingIndent: "indent"
+                });
+            });
+            //自适应宽度
+            window.onresize = function () {
+                if (monacoEditor) {
+                    monacoEditor.layout();
+                }
+            };
+        </script>
+    </div>
+</body>
+</html>
