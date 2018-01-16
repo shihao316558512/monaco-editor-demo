@@ -18,7 +18,13 @@
     <script>
         var monacoEditor;
         //init monaco
-        require.config({ paths: { 'vs': 'node_modules/monaco-editor/min/vs' } });
+        require.config({
+            paths: { 'vs': 'node_modules/monaco-editor/min/vs' }, 'vs/nls': {
+                availableLanguages: {
+                    '*': 'zh-cn'
+                }
+            }
+        });
         require(['vs/editor/editor.main'], function () {
             monacoEditor = monaco.editor.create(document.getElementById('container'), {
                 value: "<div>我是插入的代码</div>",
