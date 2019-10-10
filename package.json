@@ -17,8 +17,8 @@
   },
   "homepage": "https://github.com/shihao316558512/monaco-demo#readme",
   "dependencies": {
-    "bootstrap": "^3.3.7",
-    "jquery": "^3.2.1",
-    "monaco-editor": "^0.9.0"
+    "bootstrap": "^3.4.1",
+    "jquery": "^3.4.1",
+    "monaco-editor": "^0.18.1"
   }
 }

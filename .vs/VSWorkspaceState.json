@@ -1,7 +1,11 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\node_modules\\monaco-editor",
+    "\\node_modules\\monaco-editor\\min",
+    "\\node_modules\\monaco-editor\\min\\vs",
+    "\\node_modules\\monaco-editor\\min\\vs\\basic-languages"
   ],
-  "SelectedNode": "\\README.md",
+  "SelectedNode": "\\node_modules",
   "PreviewInSolutionExplorer": false
 }
