@@ -1,0 +1,83 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>monaco-editor basic use</title>
+    <script src="node_modules/monaco-editor/min/vs/loader.js"></script>
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <style>
+        body { background-color: pink; }
+    </style>
+</head>
+<body>
+    <div id="container" style="width:100%;height:100%;  position:absolute;top:0;right:0;left:0;bottom:0;"></div>
+    <!--<button onclick="GetEditorValue();">获取编辑器值</button>
+    <button onclick="ReCreateEditor();">重新创建编辑器</button>-->
+    <script>
+        var monacoEditor;
+        //init monaco
+        require.config({
+            paths: { 'vs': 'node_modules/monaco-editor/min/vs' }, 'vs/nls': {
+                availableLanguages: {
+                    '*': 'zh-cn'
+                }
+            }
+        });
+
+        function createDependencyProposals() {
+            // returning a static list of proposals, not even looking at the prefix (filtering is done by the Monaco editor),
+            // here you could do a server side lookup
+            return [
+                {
+                    label: 'lodash',
+                    kind: monaco.languages.CompletionItemKind.Function,
+                    documentation: "lodash 参数1 参数2 参数3 参数4 参数5",
+                    insertText: 'lodash 15 15 15 15'
+                },
+                {
+                    label: '"express"',
+                    kind: monaco.languages.CompletionItemKind.Function,
+                    documentation: "Fast, unopinionated, minimalist web framework",
+                    insertText: '"express": "*"'
+                },
+                {
+                    label: '"mkdirp"',
+                    kind: monaco.languages.CompletionItemKind.Function,
+                    documentation: "Recursively mkdir, like <code>mkdir -p</code>",
+                    insertText: '"mkdirp": "*"'
+                }
+            ];
+        }
+        function SetEditorValue(obj) {
+            $("#container").children().remove();
+            require(['vs/editor/editor.main'], function () {
+
+                monaco.languages.registerCompletionItemProvider('html', {
+                    provideCompletionItems: function (model, position) {
+                        // find out if we are completing a property in the 'dependencies' object.
+                        //var textUntilPosition = model.getValueInRange({ startLineNumber: 1, startColumn: 1, endLineNumber: position.lineNumber, endColumn: position.column });
+                        //var match = textUntilPosition.match(/"dependencies"\s*:\s*\{\s*("[^"]*"\s*:\s*"[^"]*"\s*,\s*)*([^"]*)?$/);
+                        //var suggestions = match ? createDependencyProposals() : [];
+                        return {
+                            suggestions: createDependencyProposals()
+                        };
+                    }
+                });
+                monacoEditor = monaco.editor.create(document.getElementById('container'), {
+                    value: obj,
+                    language: 'html',
+                    wordWrap: "on",   //自动换行，注意大小写
+                    wrappingIndent: "indent"
+                });
+            });
+        }
+        function GetEditorValue() {
+            return monacoEditor.getValue();
+        }
+
+        SetEditorValue("请输入lodash");
+    </script>
+</body>
+</html>
