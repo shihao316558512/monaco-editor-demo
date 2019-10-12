@@ -29,45 +29,79 @@
         function createDependencyProposals() {
             // returning a static list of proposals, not even looking at the prefix (filtering is done by the Monaco editor),
             // here you could do a server side lookup
-            return [
-                {
-                    label: 'lodash',
-                    kind: monaco.languages.CompletionItemKind.Function,
-                    documentation: "lodash 参数1 参数2 参数3 参数4 参数5",
-                    insertText: 'lodash 15 15 15 15'
-                },
-                {
-                    label: '"express"',
-                    kind: monaco.languages.CompletionItemKind.Function,
-                    documentation: "Fast, unopinionated, minimalist web framework",
-                    insertText: '"express": "*"'
-                },
-                {
-                    label: '"mkdirp"',
-                    kind: monaco.languages.CompletionItemKind.Function,
-                    documentation: "Recursively mkdir, like <code>mkdir -p</code>",
-                    insertText: '"mkdirp": "*"'
-                }
+            return [{
+                label: 'lodash',
+                kind: monaco.languages.CompletionItemKind.Function,
+                documentation: "lodash 参数1 参数2 参数3 参数4 参数5",
+                insertText: 'lodash 15 15 15 15'
+            }, {
+                label: 'simpleText',
+                kind: monaco.languages.CompletionItemKind.Text,
+                insertText: 'simpleText'
+            }, {
+                label: 'testing',
+                kind: monaco.languages.CompletionItemKind.Keyword,
+                insertText: 'testing(${1:condition})',
+                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet
+            }, {
+                label: 'ifelse',
+                kind: monaco.languages.CompletionItemKind.Snippet,
+                insertText: [
+                    'if (${1:condition}) {',
+                    '\t$0',
+                    '} else {',
+                    '\t',
+                    '}'
+                ].join('\n'),
+                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                documentation: 'If-Else Statement'
+            }
             ];
         }
+
         function SetEditorValue(obj) {
             $("#container").children().remove();
             require(['vs/editor/editor.main'], function () {
+                // Register a new language
+                monaco.languages.register({ id: 'mySpecialLanguage' });
 
-                monaco.languages.registerCompletionItemProvider('html', {
+                // Register a tokens provider for the language
+                monaco.languages.setMonarchTokensProvider('mySpecialLanguage', {
+                    tokenizer: {
+                        root: [
+                            [/lodash*/, "custom-error"],
+                            [/\[notice.*/, "custom-notice"],
+                            [/\[info.*/, "custom-info"],
+                            [/\[[a-zA-Z 0-9:]+\]/, "custom-date"],
+                        ]
+                    }
+                });
+
+                // Define a new theme that contains only rules that match this language
+                monaco.editor.defineTheme('myCoolTheme', {
+                    base: 'vs',
+                    inherit: false,
+                    rules: [
+                        { token: 'custom-info', foreground: '808080' },
+                        { token: 'custom-error', foreground: 'ff0000', fontStyle: 'bold' },
+                        { token: 'custom-notice', foreground: 'FFA500' },
+                        { token: 'custom-date', foreground: '008800' },
+                    ]
+                });
+
+                // Register a completion item provider for the new language
+                monaco.languages.registerCompletionItemProvider('mySpecialLanguage', {
                     provideCompletionItems: function (model, position) {
-                        // find out if we are completing a property in the 'dependencies' object.
-                        //var textUntilPosition = model.getValueInRange({ startLineNumber: 1, startColumn: 1, endLineNumber: position.lineNumber, endColumn: position.column });
-                        //var match = textUntilPosition.match(/"dependencies"\s*:\s*\{\s*("[^"]*"\s*:\s*"[^"]*"\s*,\s*)*([^"]*)?$/);
-                        //var suggestions = match ? createDependencyProposals() : [];
                         return {
                             suggestions: createDependencyProposals()
                         };
                     }
                 });
+
                 monacoEditor = monaco.editor.create(document.getElementById('container'), {
+                    theme: 'myCoolTheme',
                     value: obj,
-                    language: 'html',
+                    language: 'mySpecialLanguage',
                     wordWrap: "on",   //自动换行，注意大小写
                     wrappingIndent: "indent"
                 });
@@ -77,7 +111,7 @@
             return monacoEditor.getValue();
         }
 
-        SetEditorValue("请输入lodash");
+        SetEditorValue("请依次输入lodash  simpleText testing ifelse");
     </script>
 </body>
 </html>
